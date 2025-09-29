@@ -1,0 +1,30 @@
+{
+  "name": "430-project-1",
+  "version": "1.0.0",
+  "description": "first imge 430 project, making an api",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Tests complete\"",
+    "nodemon": "nodemon --watch ./src ./src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Brensworld/430-Project-1.git"
+  },
+  "author": "Brennan Gallatin",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/Brensworld/430-Project-1/issues"
+  },
+  "homepage": "https://github.com/Brensworld/430-Project-1#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.32.0",
+    "globals": "^16.4.0",
+    "nodemon": "^3.1.10"
+  }
+}
