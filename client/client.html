@@ -20,12 +20,23 @@
                     break;
             }
 
+            if(parseResponse){
+                let obj = await response.json();
+                // console.log(obj);
+                //let num = Math.round(Math.random()*250);
+                let jsonString = JSON.stringify(obj);
+                content.innerHTML+=`<p>${jsonString}</p>`;
+            }
+
 
         }
 
         const requestUpdate=async (countryForm)=>{
-            const url = countryForm.querySelector('#urlField').value;
+            let url = countryForm.querySelector('#urlField').value;
             const method = countryForm.querySelector('#methodSelect').value;
+            const name = countryForm.querySelector('#nameField').value;
+            url+=`?name=${name}`;
+            console.log(url);
 
                 let response = await fetch(url,{
                     method,
@@ -68,8 +79,10 @@
       </select>
       <select id="methodSelect">
         <option value="get">GET</option>
-        <!-- <option value="head">HEAD</option> -->
+        <option value="head">HEAD</option>
       </select>
+      <label for="name">Name:</label>
+      <input id="nameField" type="text" name="name"/>
       <input type="submit" value="Get Country" />
     </form>
   </section>

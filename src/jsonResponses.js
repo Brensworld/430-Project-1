@@ -2,7 +2,10 @@ const countries = require('../datasets/countries.json');
 
 const respondJSON = (request, response, status, object) => {
   const content = JSON.stringify(object);
-
+  if(request.body){
+    console.log(request.body);
+  }
+  
   const headers = {
     'Content-Type': 'application/json',
     'Content-Length': Buffer.byteLength(content, 'utf8'),
@@ -19,12 +22,19 @@ const respondJSON = (request, response, status, object) => {
 };
 
 const getCountries = (request, response) => {
-  console.log(countries.length);
-  const num=Math.random()*250
+  //250 countries in list
+  //console.log(countries.length);
+  let responseJSON={}
+  const protocol = request.connection.encrypted ? 'https' : 'http';
+  const parsedUrl=new URL(request.url, `${protocol}://${request.headers.host}`);
+  const name = parsedUrl.searchParams.get("name");
+  for(let i=0;i<countries.length;i++){
+    const countryName=countries[i].name;
+    if(countryName.includes(name)){
+      responseJSON+=countries[i];      
+    }
+  }
 
-  const responseJSON = {
-    countries,
-  };
 
   return respondJSON(request, response, 200, responseJSON);
 };
