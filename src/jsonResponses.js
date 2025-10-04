@@ -31,11 +31,11 @@ const getCountries = (request, response) => {
   for(let i=0;i<countries.length;i++){
     const countryName=countries[i].name;
     if(countryName.includes(name)){
-      responseJSON+=countries[i];      
+      responseJSON[countryName]={countryName};      
     }
   }
 
-
+  console.log(responseJSON);
   return respondJSON(request, response, 200, responseJSON);
 };
 
