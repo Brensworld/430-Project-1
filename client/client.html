@@ -22,10 +22,12 @@
 
             if(parseResponse){
                 let obj = await response.json();
-                // console.log(obj);
+                console.log(obj);
                 //let num = Math.round(Math.random()*250);
                 let jsonString = JSON.stringify(obj);
                 content.innerHTML+=`<p>${jsonString}</p>`;
+
+                //console.log(obj.length);
             }
 
 

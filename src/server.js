@@ -1,5 +1,5 @@
 const http = require('http');
-const countries = require('../datasets/countries.json');
+// const countries = require('../datasets/countries.json');
 const htmlResponses = require('./htmlResponses.js');
 const jsonResponses = require('./jsonResponses.js');
 
@@ -15,7 +15,6 @@ const urlStruct = {
 const onRequest = (request, response) => {
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
-  
 
   if (urlStruct[parsedUrl.pathname]) {
     return urlStruct[parsedUrl.pathname](request, response);
