@@ -28,9 +28,18 @@ const getCountries = (request, response) => {
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
   const name = parsedUrl.searchParams.get('name');
+  let region = parsedUrl.searchParams.get('region');
+
+  // countries in other regions have the region of ""
+  if (region === 'Other') {
+    region = '';
+  }
+
   for (let i = 0; i < countries.length; i++) {
     const countryName = countries[i].name;
-    if (countryName.includes(name)) {
+    const countryRegion = countries[i].region;
+
+    if (countryName.includes(name) && (countryRegion === region || region === 'None')) {
       responseJSON[countryName] = { countryName };
     }
   }
