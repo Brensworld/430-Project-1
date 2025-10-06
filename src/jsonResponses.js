@@ -1,5 +1,10 @@
 const countries = require('../datasets/countries.json');
 
+let countryNames = [];
+for (let i = 0; i < countries.length; i++) {
+  countryNames = countries[i].name;
+}
+
 const respondJSON = (request, response, status, object) => {
   const content = JSON.stringify(object);
   if (request.body) {
@@ -14,7 +19,7 @@ const respondJSON = (request, response, status, object) => {
   response.writeHead(status, headers);
 
   // 204 is an update, has no body message
-  if (request.method !== 'HEAD') {
+  if (request.method !== 'HEAD' && status !== 204) {
     response.write(content);
   }
 
@@ -48,6 +53,37 @@ const getCountries = (request, response) => {
   return respondJSON(request, response, 200, responseJSON);
 };
 
+const addCountry = (request, response) => {
+  const responseJSON = {
+    message: 'Name is both required',
+  };
+
+  // const { name, region }=request.body;
+  const newName = request.body.name;
+  const newRegion = request.body.region;
+
+  if (!newName) {
+    responseJSON.id = 'missingParams';
+    return respondJSON(request, response, 400, responseJSON);
+  }
+
+  let responseCode = 204;
+
+  if (!countryNames.includes[newName]) {
+    responseCode = 201;
+    countries.push({ name: newName, region: newRegion });
+  } else {
+    countries[countryNames.indexOf(newName)].region = newRegion;
+  }
+
+  if (responseCode === 201) {
+    responseJSON.message = 'Created Successfully';
+    return respondJSON(request, response, responseCode, responseJSON);
+  }
+
+  return respondJSON(request, response, responseCode, {});
+};
+
 const notFound = (request, response) => {
   const responseJSON = {
     message: 'The page you are looking for was not found.',
@@ -60,4 +96,5 @@ const notFound = (request, response) => {
 module.exports = {
   notFound,
   getCountries,
+  addCountry,
 };
