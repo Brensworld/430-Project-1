@@ -34,10 +34,14 @@
 
             if(parseResponse){
                 let obj = await response.json();
-                console.log(obj);
+                let keys =Object.keys(obj);
+                //console.log(keys);
                 //let num = Math.round(Math.random()*250);
-                let jsonString = JSON.stringify(obj);
-                content.innerHTML+=`<p>${jsonString}</p>`;
+                for(let i=0;i<keys.length;i++){
+                    let jsonString = JSON.stringify(obj[keys[i]].countryName);
+                    content.innerHTML+=`<p>${jsonString}</p>`;
+                }
+                
 
                 //console.log(obj.length);
             }
