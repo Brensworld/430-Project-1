@@ -41,18 +41,27 @@
                     let jsonString='';
                     if(url.includes('/getCountries')){
                         jsonString = JSON.stringify(obj[keys[i]].countryName);
+                        content.innerHTML+=`<p><a href=${jsonString}>${jsonString}</a></p>`;
                     }
                     else if(url.includes('/getSubregions')){
                         jsonString=JSON.stringify(obj[keys[i]].countrySubregion);
+                        content.innerHTML+=`<p>${jsonString}</p>`;
                     }
                     else if(url.includes('/getTimezones')){
                         jsonString=JSON.stringify(obj[keys[i]]);
+                        content.innerHTML+=`<p>${jsonString}</p>`;
                     }
-                    content.innerHTML+=`<p>${jsonString}</p>`;
+                    else if(url.includes('/getCapitals')){
+                        jsonString=JSON.stringify(obj[keys[i]]);
+                        content.innerHTML+=`<p>${jsonString}</p>`;
+                    }
+                    
                 }
                 
 
                 //console.log(obj.length);
+            }else{
+                content.innerHTML+=`<p>from ${url}</p>`;
             }
 
 
@@ -137,13 +146,14 @@
         <option value='/getCountries'>/getCountries</option>
         <option value="/getSubregions">/getSubregions</option>
         <option value="/getTimezones">/getTimezones</option>
+        <option valie="/getCapitals">/getCapitals</option>
         <!-- <option value='/notReal'>/notReal</option> -->
       </select>
       <select id="methodSelect">
         <option value="get">GET</option>
         <option value="head">HEAD</option>
       </select>
-      <label for="name">Name:</label>
+      <label for="name">Country Name:</label>
       <input id="nameField" type="text" name="name"/>
       <input type="submit" value="Get Items"  />
       <label for="region">Region:</label>
@@ -159,7 +169,7 @@
       </select>
     </form>
     <form id="addForm" action="/addCountry" method="post">
-        <label for="name">Name:</label>
+        <label for="name">New Name:</label>
         <input id="nameField" type="text" name="name"/>
         <select id="regionSelect">
             <option value="Asia">Asia</option>

@@ -11,8 +11,9 @@ for (let i = 0; i < countries.length; i++) {
 
 const respondJSON = (request, response, status, object) => {
   const content = JSON.stringify(object);
+  //console.log(content);
   if (request.body) {
-    console.log(request.body);
+    //console.log(request.body);
   }
 
   const headers = {
@@ -48,12 +49,12 @@ const getCountries = (request, response) => {
     const countryName = countries[i].name;
     const countryRegion = countries[i].region;
 
-    if (countryName.includes(name) && (countryRegion === region || region === 'None')) {
+    if (countryName.toUpperCase().includes(name.toUpperCase()) && (countryRegion === region || region === 'None')) {
       responseJSON[countryName] = { countryName };
     }
   }
 
-  console.log(responseJSON);
+  //console.log(responseJSON);
   return respondJSON(request, response, 200, responseJSON);
 };
 
@@ -61,6 +62,7 @@ const getSubregions=(request,response)=>{
   const responseJson={};
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
+  const name=parsedUrl.searchParams.get('name');
   let region = parsedUrl.searchParams.get('region');
 
   if (region === 'Other') {
@@ -74,13 +76,13 @@ const getSubregions=(request,response)=>{
     const countrySubregion=countries[i].subregion;
 
 
-    if((countryRegion=== region || region==='None') && !currentSubs.includes(countrySubregion)){
+    if((countryRegion=== region || region==='None') && !currentSubs.includes(countrySubregion)&& countryName.toUpperCase().includes(name.toUpperCase())){
       responseJson[countryName]={ countrySubregion };
       currentSubs+=countrySubregion;
     }
   }
 
-  console.log(responseJson);
+  //console.log(responseJson);
   return respondJSON(request, response, 200, responseJson);
 
 }
@@ -89,6 +91,7 @@ const getTimezones=(request,response)=>{
   let responseJSON={};
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
+  const name=parsedUrl.searchParams.get('name');
   let region = parsedUrl.searchParams.get('region');
 
   if(region==='Other'){
@@ -99,9 +102,10 @@ const getTimezones=(request,response)=>{
   for(let i=0;i<countries.length;i++){
       const countryTimezones=countries[i].timezones;
       const countryRegion = countries[i].region;
+
       const countryName=countries[i].name;
       
-      if((countryRegion===region || region==='None')){
+      if((countryRegion===region || region==='None')&& countryName.toUpperCase().includes(name.toUpperCase())){
         for(let j=0;j<countryTimezones.length;j++){
           let abbr=countryTimezones[j].abbreviation
           if(!timezones.includes(abbr)){
@@ -118,9 +122,34 @@ const getTimezones=(request,response)=>{
         }
       }
   }
-  console.log(responseJSON);
+  //console.log(responseJSON);
   respondJSON(request,response,200,responseJSON);
 
+}
+
+const getCapitals=(request,response)=>{
+  let responseJSON={};
+  const protocol = request.connection.encrypted ? 'https' : 'http';
+  const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
+  const name = parsedUrl.searchParams.get('name');
+  let region = parsedUrl.searchParams.get('region');
+
+  if(region==='Other'){
+    region='';
+  }
+
+  for(let i=0;i<countries.length;i++){
+    const captial=countries[i].capital
+    const countryRegion=countries[i].region;
+    const countryName=countries[i].name;
+
+    if(countryName.toUpperCase().includes(name.toUpperCase()) && (countryRegion===region||region==='None')){
+      responseJSON[countryName]={countryName};
+      responseJSON[countryName].captial=captial;
+    }
+  }
+
+  respondJSON(request,response,200,responseJSON);
 }
 
 const addCountry = (request, response) => {
@@ -168,5 +197,7 @@ module.exports = {
   getCountries,
   addCountry,
   getSubregions,
-  getTimezones
+  getTimezones,
+  getCapitals,
+  respondJSON
 };

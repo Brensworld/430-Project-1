@@ -1,5 +1,8 @@
 const http = require('http');
-// const countries = require('../datasets/countries.json');
+const countries = require('../datasets/countries.json');
+let countryNames = [];
+
+
 const query = require('querystring');
 const htmlResponses = require('./htmlResponses.js');
 const jsonResponses = require('./jsonResponses.js');
@@ -33,6 +36,7 @@ const urlStruct = {
   '/getCountries': jsonResponses.getCountries,
   '/getSubregions':jsonResponses.getSubregions,
   '/getTimezones':jsonResponses.getTimezones,
+  '/getCapitals':jsonResponses.getCapitals,
   '/addCountry': parseBody,
   notFound: jsonResponses.notFound,
 };
@@ -40,13 +44,22 @@ const urlStruct = {
 const onRequest = (request, response) => {
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
+  let currentName=parsedUrl.pathname.slice(1);
+  currentName=currentName.replace(/%20/g," ");
 
   if (urlStruct[parsedUrl.pathname]) {
     return urlStruct[parsedUrl.pathname](request, response);
+  }
+  else if(countryNames.includes(currentName)){
+    return jsonResponses.respondJSON(request,response,200,countries[countryNames.indexOf(currentName)])
   }
   return urlStruct.notFound(request, response);
 };
 
 http.createServer(onRequest).listen(port, () => {
   console.log(`Listening on 127.0.0.1: ${port}`);
+  for (let i = 0; i < countries.length; i++) {
+    //console.log(countries[i].name);
+    countryNames[i] = countries[i].name;
+  }
 });
