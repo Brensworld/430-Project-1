@@ -158,7 +158,10 @@ const addCountry = (request, response, countryNames) => {
 
   // const { name, region }=request.body;
   const newName = request.body.name;
-  const newRegion = request.body.region;
+  let newRegion = request.body.region;
+  if(newRegion==="Other"){
+    newRegion = '';
+  }
 
   if (!newName) {
     responseJSON.id = 'missingParams';
