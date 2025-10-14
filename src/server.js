@@ -31,6 +31,8 @@ const urlStruct = {
   '/': htmlResponses.getIndex,
   '/style.css': htmlResponses.getCSS,
   '/getCountries': jsonResponses.getCountries,
+  '/getSubregions':jsonResponses.getSubregions,
+  '/getTimezones':jsonResponses.getTimezones,
   '/addCountry': parseBody,
   notFound: jsonResponses.notFound,
 };

@@ -8,7 +8,7 @@
 
     <script>
         
-        const handleResponse=async (response, parseResponse)=>{
+        const handleResponse=async (response, parseResponse, url)=>{
             const content = document.querySelector('#content');
 
             switch(response.status){
@@ -38,7 +38,16 @@
                 //console.log(keys);
                 //let num = Math.round(Math.random()*250);
                 for(let i=0;i<keys.length;i++){
-                    let jsonString = JSON.stringify(obj[keys[i]].countryName);
+                    let jsonString='';
+                    if(url.includes('/getCountries')){
+                        jsonString = JSON.stringify(obj[keys[i]].countryName);
+                    }
+                    else if(url.includes('/getSubregions')){
+                        jsonString=JSON.stringify(obj[keys[i]].countrySubregion);
+                    }
+                    else if(url.includes('/getTimezones')){
+                        jsonString=JSON.stringify(obj[keys[i]]);
+                    }
                     content.innerHTML+=`<p>${jsonString}</p>`;
                 }
                 
@@ -67,7 +76,7 @@
                     },
                 });
 
-             handleResponse(response, method === 'get');
+             handleResponse(response, method === 'get', url);
         }
 
         const sendPost = async (addForm)=>{
@@ -126,6 +135,8 @@
     <form id="countryForm" action="/getCountries" method="get">
       <select id='urlField'>
         <option value='/getCountries'>/getCountries</option>
+        <option value="/getSubregions">/getSubregions</option>
+        <option value="/getTimezones">/getTimezones</option>
         <!-- <option value='/notReal'>/notReal</option> -->
       </select>
       <select id="methodSelect">
@@ -134,7 +145,7 @@
       </select>
       <label for="name">Name:</label>
       <input id="nameField" type="text" name="name"/>
-      <input type="submit" value="Get Country"  />
+      <input type="submit" value="Get Items"  />
       <label for="region">Region:</label>
       <select id="regionSelect" name="region">
         <option value="None">None</option>
