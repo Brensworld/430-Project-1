@@ -1,19 +1,20 @@
 const countries = require('../datasets/countries.json');
+// const srv = require('./server.js');
 
-//let countryNames = [];
-let subregions=[];
+const countryNames = [];
+let subregions = [];
 for (let i = 0; i < countries.length; i++) {
-  //countryNames = countries[i].name;
-  if(!subregions.includes(countries[i].subregion)){
-    subregions+=countries[i].subregion;
+  countryNames[i] = countries[i].name;
+  if (!subregions.includes(countries[i].subregion)) {
+    subregions += countries[i].subregion;
   }
 }
 
 const respondJSON = (request, response, status, object) => {
   const content = JSON.stringify(object);
-  //console.log(content);
+  // console.log(content);
   if (request.body) {
-    //console.log(request.body);
+    // console.log(request.body);
   }
 
   const headers = {
@@ -48,110 +49,107 @@ const getCountries = (request, response) => {
   for (let i = 0; i < countries.length; i++) {
     const countryName = countries[i].name;
     const countryRegion = countries[i].region;
-    if ((name===null || countryName.toUpperCase().includes(name.toUpperCase())) && (countryRegion === region || region === 'None' || region===null)) {
+    if ((name === null || countryName.toUpperCase().includes(name.toUpperCase())) && (countryRegion === region || region === 'None' || region === null)) {
       responseJSON[countryName] = { countryName };
     }
   }
 
-  //console.log(responseJSON);
+  // console.log(responseJSON);
   return respondJSON(request, response, 200, responseJSON);
 };
 
-const getSubregions=(request,response)=>{
-  const responseJson={};
+const getSubregions = (request, response) => {
+  const responseJson = {};
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
-  const name=parsedUrl.searchParams.get('name');
+  const name = parsedUrl.searchParams.get('name');
   let region = parsedUrl.searchParams.get('region');
 
   if (region === 'Other') {
     region = '';
   }
 
-  let currentSubs=[];
-  for(let i=0;i<countries.length;i++){
-    const countryName=countries[i].name;
+  let currentSubs = [];
+  for (let i = 0; i < countries.length; i++) {
+    const countryName = countries[i].name;
     const countryRegion = countries[i].region;
-    const countrySubregion=countries[i].subregion;
+    const countrySubregion = countries[i].subregion;
 
-
-    if((countryRegion=== region || region==='None') && !currentSubs.includes(countrySubregion)&& countryName.toUpperCase().includes(name.toUpperCase())){
-      responseJson[countryName]={ countrySubregion };
-      currentSubs+=countrySubregion;
+    if ((countryRegion === region || region === 'None') && !currentSubs.includes(countrySubregion) && countryName.toUpperCase().includes(name.toUpperCase())) {
+      responseJson[countryName] = { countrySubregion };
+      currentSubs += countrySubregion;
     }
   }
 
-  //console.log(responseJson);
+  // console.log(responseJson);
   return respondJSON(request, response, 200, responseJson);
+};
 
-}
-
-const getTimezones=(request,response)=>{
-  let responseJSON={};
-  const protocol = request.connection.encrypted ? 'https' : 'http';
-  const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
-  const name=parsedUrl.searchParams.get('name');
-  let region = parsedUrl.searchParams.get('region');
-
-  if(region==='Other'){
-    region='';
-  }
-
-  let timezones=[];
-  for(let i=0;i<countries.length;i++){
-      const countryTimezones=countries[i].timezones;
-      const countryRegion = countries[i].region;
-
-      const countryName=countries[i].name;
-      
-      if((countryRegion===region || region==='None')&& countryName.toUpperCase().includes(name.toUpperCase())){
-        for(let j=0;j<countryTimezones.length;j++){
-          let abbr=countryTimezones[j].abbreviation
-          if(!timezones.includes(abbr)){
-            //console.log(abbr);
-            timezones+=abbr;
-            responseJSON[abbr]={abbr};
-            responseJSON[abbr].name=countryTimezones[j].tzName;
-            responseJSON[abbr].gmtOffset=countryTimezones[j].gmtOffset;
-            //responseJSON[abbr].countriesInZone=`${countryName}, `;
-          }//else if (responseJSON[abbr].countriesInZone){
-          //   console.log(responseJSON[abbr]);
-          //   responseJSON[abbr].countriesInZone+=`${countryName}, `;
-          // }
-        }
-      }
-  }
-  //console.log(responseJSON);
-  respondJSON(request,response,200,responseJSON);
-
-}
-
-const getCapitals=(request,response)=>{
-  let responseJSON={};
+const getTimezones = (request, response) => {
+  const responseJSON = {};
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
   const name = parsedUrl.searchParams.get('name');
   let region = parsedUrl.searchParams.get('region');
 
-  if(region==='Other'){
-    region='';
+  if (region === 'Other') {
+    region = '';
   }
 
-  for(let i=0;i<countries.length;i++){
-    const captial=countries[i].capital
-    const countryRegion=countries[i].region;
-    const countryName=countries[i].name;
+  let timezones = [];
+  for (let i = 0; i < countries.length; i++) {
+    const countryTimezones = countries[i].timezones;
+    const countryRegion = countries[i].region;
 
-    if(countryName.toUpperCase().includes(name.toUpperCase()) && (countryRegion===region||region==='None')){
-      responseJSON[countryName]={countryName};
-      responseJSON[countryName].captial=captial;
+    const countryName = countries[i].name;
+
+    if ((countryRegion === region || region === 'None') && countryName.toUpperCase().includes(name.toUpperCase())) {
+      for (let j = 0; j < countryTimezones.length; j++) {
+        const abbr = countryTimezones[j].abbreviation;
+        if (!timezones.includes(abbr)) {
+          // console.log(abbr);
+          timezones += abbr;
+          responseJSON[abbr] = { abbr };
+          responseJSON[abbr].name = countryTimezones[j].tzName;
+          responseJSON[abbr].gmtOffset = countryTimezones[j].gmtOffset;
+          // responseJSON[abbr].countriesInZone=`${countryName}, `;
+        }// else if (responseJSON[abbr].countriesInZone){
+        //   console.log(responseJSON[abbr]);
+        //   responseJSON[abbr].countriesInZone+=`${countryName}, `;
+        // }
+      }
+    }
+  }
+  // console.log(responseJSON);
+  respondJSON(request, response, 200, responseJSON);
+};
+
+const getCapitals = (request, response) => {
+  const responseJSON = {};
+  const protocol = request.connection.encrypted ? 'https' : 'http';
+  const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
+  const name = parsedUrl.searchParams.get('name');
+  let region = parsedUrl.searchParams.get('region');
+
+  if (region === 'Other') {
+    region = '';
+  }
+
+  for (let i = 0; i < countries.length; i++) {
+    const captial = countries[i].capital;
+    const countryRegion = countries[i].region;
+    const countryName = countries[i].name;
+
+    if (countryName.toUpperCase().includes(name.toUpperCase()) && (countryRegion === region || region === 'None')) {
+      responseJSON[countryName] = { countryName };
+      responseJSON[countryName].captial = captial;
     }
   }
 
-  respondJSON(request,response,200,responseJSON);
-}
+  respondJSON(request, response, 200, responseJSON);
+};
 
-const addCountry = (request, response, countryNames) => {
+const addCountry = (request, response) => {
   const responseJSON = {
     message: 'Name is required',
   };
@@ -159,7 +157,7 @@ const addCountry = (request, response, countryNames) => {
   // const { name, region }=request.body;
   const newName = request.body.name;
   let newRegion = request.body.region;
-  if(newRegion==="Other"){
+  if (newRegion === 'Other') {
     newRegion = '';
   }
 
@@ -170,10 +168,10 @@ const addCountry = (request, response, countryNames) => {
 
   let responseCode = 204;
 
-  if (countryNames.indexOf(newName)==-1) {
+  if (countryNames.indexOf(newName) === -1) {
     responseCode = 201;
     countries.push({ name: newName, region: newRegion });
-    countryNames[countryNames.length]=newName;
+    countryNames[countryNames.length] = newName;
   } else {
     countries[countryNames.indexOf(newName)].region = newRegion;
   }
@@ -195,6 +193,8 @@ const notFound = (request, response) => {
   respondJSON(request, response, 404, responseJSON);
 };
 
+const getCountryNames = () => countryNames;
+
 module.exports = {
   notFound,
   getCountries,
@@ -202,5 +202,6 @@ module.exports = {
   getSubregions,
   getTimezones,
   getCapitals,
-  respondJSON
+  respondJSON,
+  getCountryNames,
 };
