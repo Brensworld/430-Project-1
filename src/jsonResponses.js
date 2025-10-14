@@ -153,7 +153,7 @@ const getCapitals=(request,response)=>{
 
 const addCountry = (request, response, countryNames) => {
   const responseJSON = {
-    message: 'Name is both required',
+    message: 'Name is required',
   };
 
   // const { name, region }=request.body;
@@ -170,7 +170,7 @@ const addCountry = (request, response, countryNames) => {
 
   let responseCode = 204;
 
-  if (!countryNames.includes[newName]) {
+  if (countryNames.indexOf(newName)==-1) {
     responseCode = 201;
     countries.push({ name: newName, region: newRegion });
     countryNames[countryNames.length]=newName;
