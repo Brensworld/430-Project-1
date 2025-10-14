@@ -1,9 +1,9 @@
 const countries = require('../datasets/countries.json');
 
-let countryNames = [];
+//let countryNames = [];
 let subregions=[];
 for (let i = 0; i < countries.length; i++) {
-  countryNames = countries[i].name;
+  //countryNames = countries[i].name;
   if(!subregions.includes(countries[i].subregion)){
     subregions+=countries[i].subregion;
   }
@@ -48,8 +48,7 @@ const getCountries = (request, response) => {
   for (let i = 0; i < countries.length; i++) {
     const countryName = countries[i].name;
     const countryRegion = countries[i].region;
-
-    if (countryName.toUpperCase().includes(name.toUpperCase()) && (countryRegion === region || region === 'None')) {
+    if ((name===null || countryName.toUpperCase().includes(name.toUpperCase())) && (countryRegion === region || region === 'None' || region===null)) {
       responseJSON[countryName] = { countryName };
     }
   }
@@ -152,7 +151,7 @@ const getCapitals=(request,response)=>{
   respondJSON(request,response,200,responseJSON);
 }
 
-const addCountry = (request, response) => {
+const addCountry = (request, response, countryNames) => {
   const responseJSON = {
     message: 'Name is both required',
   };
@@ -171,6 +170,7 @@ const addCountry = (request, response) => {
   if (!countryNames.includes[newName]) {
     responseCode = 201;
     countries.push({ name: newName, region: newRegion });
+    countryNames[countryNames.length]=newName;
   } else {
     countries[countryNames.indexOf(newName)].region = newRegion;
   }

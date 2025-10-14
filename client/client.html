@@ -89,7 +89,7 @@
         }
 
         const sendPost = async (addForm)=>{
-            let url = addForm.getAttribute('action');
+            let url = addForm.querySelector('#urlField').value;
             const method = addForm.getAttribute('method');
 
             const name = addForm.querySelector('#nameField').value;
@@ -169,6 +169,9 @@
       </select>
     </form>
     <form id="addForm" action="/addCountry" method="post">
+        <select id="urlField">
+            <option value="/addCountry">/addCountry</option>
+        </select>
         <label for="name">New Name:</label>
         <input id="nameField" type="text" name="name"/>
         <select id="regionSelect">
@@ -180,7 +183,7 @@
             <option value="Polar">Polar</option>
             <option value="Other">Other</option>
       </select>
-      <input type="submit" value="Add Country"  />
+      <input type="submit" value="Submit"  />
     </form>
   </section>
   <section id="content">

@@ -26,7 +26,7 @@ const parseBody = (request, response) => {
     const bodyString = Buffer.concat(body).toString();
     request.body = query.parse(bodyString);
 
-    jsonResponses.addCountry(request, response);
+    jsonResponses.addCountry(request, response, countryNames);
   });
 };
 
