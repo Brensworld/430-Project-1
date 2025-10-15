@@ -52,15 +52,17 @@
                         content.innerHTML+=`<p>${jsonString}</p>`;
                     }
                     else if(url.includes('/getCapitals')){
-                        jsonString=JSON.stringify(obj[keys[i]]);
-                        content.innerHTML+=`<p>${jsonString}</p>`;
+                        country=JSON.stringify(obj[keys[i]].countryName);
+                        capital=JSON.stringify(obj[keys[i]].capital);
+                        content.innerHTML+=`<p>Country: ${country}, Capital: ${capital}</p>`;
                     }
                     
                 }
                 
 
                 //console.log(obj.length);
-            }else{
+            }else if(url){
+                url=url.replace('&','&amp');
                 content.innerHTML+=`<p>from ${url}</p>`;
             }
 
@@ -94,9 +96,11 @@
 
             const name = addForm.querySelector('#nameField').value;
             const region=addForm.querySelector('#regionSelect').value;
+            const data=addForm.querySelector('#dataField').value;
+            const value=addForm.querySelector('#valueField').value;
             
 
-            const formData=`name=${name}&region=${region}`;
+            const formData=`name=${name}&region=${region}&data=${data}&value=${value}`;
 
             const response =await fetch(url,{
                 method:method,
@@ -172,9 +176,15 @@
     <form id="addForm" action="/addCountry" method="post">
         <select id="urlField">
             <option value="/addCountry">/addCountry</option>
+            <option value="/addData">/addData</option>
         </select>
         <label for="name">New Name:</label>
         <input id="nameField" type="text" name="name"/>
+        <label for="data">New Data:</label>
+        <input id="dataField" type="text" name="data"/>
+        <label for="value">Data Value:</label>
+        <input id="valueField" type="text" name="value">
+        
         <select id="regionSelect">
             <option value="Asia">Asia</option>
             <option value="Europe">Europe</option>
@@ -187,6 +197,7 @@
       <input type="submit" value="Submit"  />
     </form>
   </section>
+  <p><a href="/documentation.html">Documentation</a></p>
   <section id="content">
   </section>
 </body>

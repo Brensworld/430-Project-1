@@ -9,6 +9,8 @@ let countryNames = jsonResponses.getCountryNames;
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const parseBody = (request, response) => {
+  const protocol = request.connection.encrypted ? 'https' : 'http';
+  const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
   const body = [];
 
   request.on('error', (err) => {
@@ -25,7 +27,11 @@ const parseBody = (request, response) => {
     const bodyString = Buffer.concat(body).toString();
     request.body = query.parse(bodyString);
 
-    jsonResponses.addCountry(request, response);
+    if (parsedUrl.pathname === '/addCountry') {
+      jsonResponses.addCountry(request, response);
+    } else if (parsedUrl.pathname === '/addData') {
+      jsonResponses.addData(request, response);
+    }
   });
 };
 
@@ -37,6 +43,8 @@ const urlStruct = {
   '/getTimezones': jsonResponses.getTimezones,
   '/getCapitals': jsonResponses.getCapitals,
   '/addCountry': parseBody,
+  '/addData': parseBody,
+  '/documentation.html': htmlResponses.getDocumentation,
   notFound: jsonResponses.notFound,
 };
 

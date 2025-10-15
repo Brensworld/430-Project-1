@@ -49,7 +49,8 @@ const getCountries = (request, response) => {
   for (let i = 0; i < countries.length; i++) {
     const countryName = countries[i].name;
     const countryRegion = countries[i].region;
-    if ((name === null || countryName.toUpperCase().includes(name.toUpperCase())) && (countryRegion === region || region === 'None' || region === null)) {
+    if ((name === null || countryName.toUpperCase().includes(name.toUpperCase()))
+      && (countryRegion === region || region === 'None' || region === null)) {
       responseJSON[countryName] = { countryName };
     }
   }
@@ -75,7 +76,9 @@ const getSubregions = (request, response) => {
     const countryRegion = countries[i].region;
     const countrySubregion = countries[i].subregion;
 
-    if ((countryRegion === region || region === 'None') && !currentSubs.includes(countrySubregion) && countryName.toUpperCase().includes(name.toUpperCase())) {
+    if ((countryRegion === region || region === 'None' || region === null)
+      && !currentSubs.includes(countrySubregion)
+      && (name === null || countryName.toUpperCase().includes(name.toUpperCase()))) {
       responseJson[countryName] = { countrySubregion };
       currentSubs += countrySubregion;
     }
@@ -103,7 +106,8 @@ const getTimezones = (request, response) => {
 
     const countryName = countries[i].name;
 
-    if ((countryRegion === region || region === 'None') && countryName.toUpperCase().includes(name.toUpperCase())) {
+    if ((region === null || countryRegion === region || region === 'None')
+      && (name === null || countryName.toUpperCase().includes(name.toUpperCase()))) {
       for (let j = 0; j < countryTimezones.length; j++) {
         const abbr = countryTimezones[j].abbreviation;
         if (!timezones.includes(abbr)) {
@@ -136,13 +140,14 @@ const getCapitals = (request, response) => {
   }
 
   for (let i = 0; i < countries.length; i++) {
-    const captial = countries[i].capital;
+    const { capital } = countries[i];
     const countryRegion = countries[i].region;
     const countryName = countries[i].name;
 
-    if (countryName.toUpperCase().includes(name.toUpperCase()) && (countryRegion === region || region === 'None')) {
+    if ((name === null || countryName.toUpperCase().includes(name.toUpperCase()))
+      && (region === null || countryRegion === region || region === 'None')) {
       responseJSON[countryName] = { countryName };
-      responseJSON[countryName].captial = captial;
+      responseJSON[countryName].capital = capital;
     }
   }
 
@@ -184,6 +189,39 @@ const addCountry = (request, response) => {
   return respondJSON(request, response, responseCode, {});
 };
 
+const addData = (request, response) => {
+  const responseJSON = {
+    message: 'Valid name is required',
+  };
+
+  const { name } = request.body;
+  const { data } = request.body;
+  const { value } = request.body;
+
+  if (!name) {
+    responseJSON.id = 'missingParams';
+    return respondJSON(request, response, 400, responseJSON);
+  }
+
+  if (!(countryNames.includes(name))) {
+    responseJSON.id = 'Invalid Country Name';
+    return respondJSON(request, response, 400, responseJSON);
+  }
+
+  if (!data || !value) {
+    responseJSON.message = 'Invalid data or value';
+    responseJSON.id = 'badInput';
+    return respondJSON(request, response, 400, responseJSON);
+  }
+
+  const responseCode = 204;
+  const index = countryNames.indexOf(name);
+  countries[index][data] = value;
+  responseJSON.message = 'Data added';
+  responseJSON.id = 'updated';
+  return respondJSON(request, response, responseCode, responseJSON);
+};
+
 const notFound = (request, response) => {
   const responseJSON = {
     message: 'The page you are looking for was not found.',
@@ -204,4 +242,5 @@ module.exports = {
   getCapitals,
   respondJSON,
   getCountryNames,
+  addData,
 };

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brennan Gallatin IGME430 Project 1 Documentation</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+</head>
+<body>
+    <h1>IGME 430 Project 1 Documentation</h3>
+    <h2>By Brennan Gallatin</h4>
+    <a href="/">Back to api</a>
+    <p></p>
+    <h3>/getCountries (GET, HEAD)</h3>
+    <h4>Query Params</h4>
+    <p>Name (optional): name or part of a name to filter by</p>
+    <p>Region: region of countries to filter by</p>
+    <h4>Returns</h4>
+    <p>A json array of country names. Format: {string:{countryName:string}}</p>
+    <h4>Examples</h4>
+    <p>Request: /getCountries?name=&ampregion=None</p>
+    <p>Result:{Country 1:{countryName:name}, Country 2:{countryName:name}} </p>
+    <p>Request: /getCountries?name=Al&ampregion=Europe</p>
+    <p>Result:{Aland Islands:{countryName:Aland Islands}, Albania:{countryName:Albania}}</p>
+    <p>In the client, all displayed countries are links, and clicking on them shows the JSON data for that country</p>
+    <p></p>
+
+    <h3>/getSubregions (GET, HEAD)</h3>
+    <h4>Query Params</h4>
+    <p>Name (optional): name or part of a name to filter by</p>
+    <p>Region: region of countries to filter by</p>
+    <h4>Returns</h4>
+    <p>A json array of country subregions, the idea being to get the subregions of a country or region.
+         Format: {string:{countrySubregion:string}}</p>
+    <h4>Examples</h4>
+    <p>Request: /getCountries?name=&ampregion=None</p>
+    <p>Result:{Country 1:{countrySubregion:subregion}, Country 2:{countrySubregion:subregion}} </p>
+    <p>Request: /getCountries?name=Al&ampregion=Europe</p>
+    <p>Result:{Aland Islands:{countrySubregion:Northern Europe}, Albania:{countrSubregion:Southern Europe}}</p>
+    <p></p>
+
+    <h3>/getTimezones (GET, HEAD)</h3>
+    <h4>Query Params</h4>
+    <p>Name (optional): name or part of a name to filter by</p>
+    <p>Region: region of countries to filter by</p>
+    <h4>Returns</h4>
+    <p>A json array of timezones, the idea being to get the timezones of a country or region.
+         Format: {string:{abbr:string, name: string, gmtOffset: int}}</p>
+    <h4>Examples</h4>
+    <p>Request: /getCountries?name=&ampregion=None</p>
+    <p>Result:{AFT:{abbr:AFT, name: Afghanistan Time, gmtOffset: 16200}} </p>
+    <p>Request: /getCountries?name=United States&ampregion=None</p>
+    <p>Result:{HST:{abbr:HST, name: Hawaii-Aleutian Standard Time, gmtOffset:-36000}}</p>
+    <p></p>
+
+    <h3>/getCapitals (GET, HEAD)</h3>
+    <h4>Query Params</h4>
+    <p>Name (optional): name or part of a name to filter by</p>
+    <p>Region: region of countries to filter by</p>
+    <h4>Returns</h4>
+    <p>A json array of countries and their capitals
+         Format: {string:{countryName:string, capital: string}}</p>
+    <h4>Examples</h4>
+    <p>Request: /getCountries?name=&ampregion=None</p>
+    <p>Result:{name:{countryName:name, capital: capital}} </p>
+    <p>Request: /getCountries?name=United States&ampregion=None</p>
+    <p>Result:{United States:{countryName: United States, capital: Washington}}</p>
+    <p></p>
+
+    <h3>/addCountry (POST)</h3>
+    <h4>Body Params</h4>
+    <p>Name: name of the new country</p>
+    <p>Region: region of the new country</p>
+    <h4>Returns</h4>
+    <p>a message if a new country was created, Format: {message:string}</p>
+    <p>Nothing is returned if an existing country name is input (country region can be updated)</p>
+    <h4>Examples</h4>
+    <p>Request: /addCountry</p>
+    <p>Body: {name: New Country, region=Asia }</p>
+    <p>Result:{message: Created Successfully} </p>
+    <p>Request: /addCountry</p>
+    <p>Body: {name: New Country, region=Polar}</p>
+    <p>Result:None (region of New Country is updated)</p>
+    <p></p>
+
+    <h3>/addData(POST)</h3>
+    <h4>Body Params</h4>
+    <p>Name: name of the country to add data to</p>
+    <p>Data: name of the data being added</p>
+    <p>Value: value of the data being added</p>
+    <h4>Returns</h4>
+    <p>a message if a there was a bad request, Format: {message:string}</p>
+    <p>Nothing is returned if valid data was added (new data can be checked from /getCountries)</p>
+    <h4>Examples</h4>
+    <p>Request: /addData</p>
+    <p>Body: {name: United States, data:Size, value:really big }</p>
+    <p>Result:None (client displays that it has been updated) </p>
+    <p>Request: /addData</p>
+    <p>Body: {name: United States, data:  value: }</p>
+    <p>Result:{message: Invalid data or value, id: badInput}</p>
+    <p></p>
+    
+</body>
+</html>
