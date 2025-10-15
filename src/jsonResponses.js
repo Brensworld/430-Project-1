@@ -1,6 +1,7 @@
 const countries = require('../datasets/countries.json');
 // const srv = require('./server.js');
 
+// setting up arrays of the country names and subregions for later
 const countryNames = [];
 let subregions = [];
 for (let i = 0; i < countries.length; i++) {
@@ -12,10 +13,6 @@ for (let i = 0; i < countries.length; i++) {
 
 const respondJSON = (request, response, status, object) => {
   const content = JSON.stringify(object);
-  // console.log(content);
-  if (request.body) {
-    // console.log(request.body);
-  }
 
   const headers = {
     'Content-Type': 'application/json',
@@ -33,8 +30,6 @@ const respondJSON = (request, response, status, object) => {
 };
 
 const getCountries = (request, response) => {
-  // 250 countries in list
-  // console.log(countries.length);
   const responseJSON = {};
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
@@ -46,16 +41,18 @@ const getCountries = (request, response) => {
     region = '';
   }
 
+  // going through and filtering countries
   for (let i = 0; i < countries.length; i++) {
     const countryName = countries[i].name;
     const countryRegion = countries[i].region;
+    // checking if the name & region fits, and for null for when
+    // users go directly to the page
     if ((name === null || countryName.toUpperCase().includes(name.toUpperCase()))
       && (countryRegion === region || region === 'None' || region === null)) {
       responseJSON[countryName] = { countryName };
     }
   }
 
-  // console.log(responseJSON);
   return respondJSON(request, response, 200, responseJSON);
 };
 
@@ -76,6 +73,8 @@ const getSubregions = (request, response) => {
     const countryRegion = countries[i].region;
     const countrySubregion = countries[i].subregion;
 
+    // same filtering as above, plus checking if the current subregion isn't already
+    // in the result
     if ((countryRegion === region || region === 'None' || region === null)
       && !currentSubs.includes(countrySubregion)
       && (name === null || countryName.toUpperCase().includes(name.toUpperCase()))) {
@@ -84,7 +83,6 @@ const getSubregions = (request, response) => {
     }
   }
 
-  // console.log(responseJson);
   return respondJSON(request, response, 200, responseJson);
 };
 
@@ -106,26 +104,22 @@ const getTimezones = (request, response) => {
 
     const countryName = countries[i].name;
 
+    // same filtering as above
     if ((region === null || countryRegion === region || region === 'None')
       && (name === null || countryName.toUpperCase().includes(name.toUpperCase()))) {
       for (let j = 0; j < countryTimezones.length; j++) {
         const abbr = countryTimezones[j].abbreviation;
         if (!timezones.includes(abbr)) {
-          // console.log(abbr);
           timezones += abbr;
           responseJSON[abbr] = { abbr };
           responseJSON[abbr].name = countryTimezones[j].tzName;
           responseJSON[abbr].gmtOffset = countryTimezones[j].gmtOffset;
-          // responseJSON[abbr].countriesInZone=`${countryName}, `;
-        }// else if (responseJSON[abbr].countriesInZone){
-        //   console.log(responseJSON[abbr]);
-        //   responseJSON[abbr].countriesInZone+=`${countryName}, `;
-        // }
+        }
       }
     }
+
+    respondJSON(request, response, 200, responseJSON);
   }
-  // console.log(responseJSON);
-  respondJSON(request, response, 200, responseJSON);
 };
 
 const getCapitals = (request, response) => {
@@ -144,6 +138,7 @@ const getCapitals = (request, response) => {
     const countryRegion = countries[i].region;
     const countryName = countries[i].name;
 
+    // same filtering as above
     if ((name === null || countryName.toUpperCase().includes(name.toUpperCase()))
       && (region === null || countryRegion === region || region === 'None')) {
       responseJSON[countryName] = { countryName };
@@ -159,7 +154,6 @@ const addCountry = (request, response) => {
     message: 'Name is required',
   };
 
-  // const { name, region }=request.body;
   const newName = request.body.name;
   let newRegion = request.body.region;
   if (newRegion === 'Other') {
@@ -173,10 +167,13 @@ const addCountry = (request, response) => {
 
   let responseCode = 204;
 
+  // checking that newName doesn't exist
   if (countryNames.indexOf(newName) === -1) {
     responseCode = 201;
     countries.push({ name: newName, region: newRegion });
     countryNames[countryNames.length] = newName;
+
+    // otherwise, just updating region
   } else {
     countries[countryNames.indexOf(newName)].region = newRegion;
   }
@@ -203,6 +200,7 @@ const addData = (request, response) => {
     return respondJSON(request, response, 400, responseJSON);
   }
 
+  // checking that the country with new data is in the list
   if (!(countryNames.includes(name))) {
     responseJSON.id = 'Invalid Country Name';
     return respondJSON(request, response, 400, responseJSON);
